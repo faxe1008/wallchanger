@@ -1,0 +1,9 @@
+[Unit]
+Description=Change wallpaper
+
+[Service]
+Environment="DISPLAY=:0.0"
+ExecStart=/usr/sbin/wallchanger
+
+[Install]
+WantedBy=multi-user.target

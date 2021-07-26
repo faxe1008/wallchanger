@@ -1,0 +1,6 @@
+dwm.normbgcolor: {background}
+dwm.normbordercolor: {color1}
+dwm.normfgcolor : {foreground}
+dwm.selfgcolor: {color5}
+dwm.selbgcolor: {color8}
+dwm.selbordercolor: {color7}

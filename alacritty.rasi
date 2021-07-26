@@ -1,0 +1,77 @@
+# Configuration for Alacritty, the GPU enhanced terminal emulator
+
+# Any items in the `env` entry below will be added as
+# environment variables. Some entries may override variables
+# set by alacritty it self.
+env:
+  # TERM env customization.
+  #
+  # If this property is not set, alacritty will set it to xterm-256color.
+  #
+  # Note that some xterm terminfo databases don't declare support for italics.
+  # You can verify this by checking for the presence of `smso` and `sitm` in
+  # `infocmp xterm-256color`.
+  TERM: xterm-256color
+
+# Window dimensions in character columns and lines
+# (changes require restart)
+window:
+  dimensions:
+    columns: 110
+    lines: 33
+
+  # Adds this many blank pixels of padding around the window
+  # Units are physical pixels; this is not DPI aware.
+  # (change requires restart)
+  padding:
+    x: 0
+    y: 0
+
+  decorations: full
+
+background_opacity: 0.55
+
+
+font:
+  size: 12
+
+# The FreeType rasterizer needs to know the device DPI for best results
+# (changes require restart)
+dpi:
+  x: 128.0
+  y: 128.0
+
+# When true, bold text is drawn using the bright variant of colors.
+draw_bold_text_with_bright_colors: true
+
+# Should display the render timer
+debug.render_timer: false
+
+# Colors (iTerm 2 default theme)
+colors:
+  # Default colors
+  primary:
+    background: '{background}'
+    foreground: '{foreground}'
+
+ # Normal colors
+  normal:
+    black:   '{color0}'
+    red:     '{color1}'
+    green:   '{color2}'
+    yellow:  '{color3}'
+    blue:    '{color4}'
+    magenta: '{color5}'
+    cyan:    '{color6}'
+    white:   '{color7}'
+
+ # Bright colors
+  bright:
+    black:   '{color8}'
+    red:     '{color9}'
+    green:   '{color10}'
+    yellow:  '{color11}'
+    blue:    '{color12}'
+    magenta: '{color13}'
+    cyan:    '{color14}'
+    white:   '{color15}'

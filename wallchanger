@@ -1,0 +1,78 @@
+#!/bin/bash
+set -euo pipefail
+
+output_path="${HOME}/.config/wallpapers"
+nitrogen_conf="${HOME}/.config/nitrogen/bg-saved.cfg"
+tags=("tiltshift" "nature" "landscape" "abstract" "mountains" "coast" "4k")
+max_count=15
+
+pywal_saturation=1.0
+pywal_backend="colorthief"
+pywal_sync="1"
+sync_alacritty="0"
+sync_dwm="1"
+
+downloaded_image=""
+
+delete_images () {
+	while [ $(find ${output_path} -name '*' -exec file {} \; | grep -o -P '^.+: \w+ image' | wc -l) -gt "$max_count" ];
+	do
+		w_path=$(find ${output_path} -name '*' -exec file {} \; | grep -o -P '^.+: \w+ image' | shuf -n1 | awk -F ":" '{ print $1 }')
+		echo "Deleting $w_path"
+		rm -f "$w_path"
+	done
+}
+
+download_random_image () {
+	sel_tag=$(printf "%s\n" "${tags[@]}" | shuf -n1)
+	
+	response=$(wget -qO- https://wallhaven.cc/api/v1/search?q=+$sel_tag&sorting=random)
+	[ -z "${response}" ] && return 0
+
+	sel_id=$(echo -e ${response} | jq -c '.data | .[] | .path' | shuf -n1 | tr -d '"')
+	echo "Downloading image for tag $sel_tag, path $sel_id"
+
+	wget $sel_id -qP $output_path
+	downloaded_image=$(basename $sel_id)
+}
+
+choose_random_image () {
+	if [ -z "${downloaded_image}" ];
+	then 
+		downloaded_image=$(find ${output_path} -name '*' -exec file {} \; | grep -o -P '^.+: \w+ image' | shuf -n1 | awk -F ":" '{ print $1 }')
+	else
+		downloaded_image="$output_path/$downloaded_image"
+	fi 
+}
+
+pywal_sync () {
+	
+	[ "$pywal_sync" != "1" ] && return 0
+
+	wal -s -t -i $downloaded_image --saturate $pywal_saturation --backend $pywal_backend
+	
+	if [ "${sync_alacritty}" = "1" ];
+	then
+		echo "Syncing alacritty theme"
+		cp ${HOME}/.cache/wal/alacritty.rasi ${HOME}/.config/alacritty/alacritty.yml
+	fi
+
+	if [ "${sync_dwm}" = "1" ];
+	then
+		echo "Syncing dwm theme"
+		cp ${HOME}/.cache/wal/xresources.rasi ${HOME}/.Xresources
+		xrdb ${HOME}/.Xresources
+		xsetroot -name "fsignal:1"
+	fi
+}
+
+set_bg_img () {
+	sed -i "s|file=.*|file=$downloaded_image|g" $nitrogen_conf 
+	nitrogen --sync --set-zoom-fill $downloaded_image 
+}
+
+delete_images
+download_random_image
+choose_random_image
+pywal_sync
+set_bg_img
